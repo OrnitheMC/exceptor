@@ -1,0 +1,66 @@
+plugins {
+    id 'java'
+    id 'java-library'
+    id 'maven-publish'
+}
+
+group 'net.ornithemc'
+version '1.0.0'
+
+def ENV = System.getenv()
+
+repositories {
+    maven {
+        url = 'https://maven.ornithemc.net/releases'
+    }
+    mavenCentral()
+}
+
+sourceCompatibility = '17'
+targetCompatibility = '17'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+dependencies {
+    implementation 'org.ow2.asm:asm:9.2'
+    implementation 'org.ow2.asm:asm-commons:9.2'
+    implementation 'org.ow2.asm:asm-tree:9.2'
+    implementation 'org.ow2.asm:asm-util:9.2'
+}
+
+jar {
+    manifest {
+        attributes(
+            'Main-Class': 'net.ornithemc.exceptor.Main'
+        )
+    }
+}
+
+java {
+    withSourcesJar()
+}
+
+publishing {
+    publications{
+        maven(MavenPublication) {
+            groupId = project.group
+            artifactId = project.base.archivesName.get()
+            version = project.version
+
+            artifact jar
+        }
+    }
+    repositories {
+        if (ENV.MAVEN_URL) {
+            maven {
+                url = ENV.MAVEN_URL
+                credentials {
+                    username = ENV.MAVEN_USERNAME
+                    password = ENV.MAVEN_PASSWORD
+                }
+            }
+        }
+    }
+}
