@@ -18,7 +18,17 @@ public class ExceptorIo {
 
 	public static ExceptionsFile read(BufferedReader br) throws IOException {
 		ExceptionsFile exceptions = new ExceptionsFile();
+		read(br, exceptions);
+		return exceptions;
+	}
 
+	public static void read(Path path, ExceptionsFile exceptions) throws IOException {
+		try (BufferedReader br = Files.newBufferedReader(path)) {
+			read(br, exceptions);
+		}
+	}
+
+	public static void read(BufferedReader br, ExceptionsFile exceptions) throws IOException {
 		int lineNumber = 0;
 
 		try {
@@ -78,8 +88,6 @@ public class ExceptorIo {
 		} catch (Throwable t) {
 			throw new IOException("badly formatted file on line " + lineNumber);
 		}
-
-		return exceptions;
 	}
 
 	public static void write(Path path, ExceptionsFile exceptions) throws IOException {
